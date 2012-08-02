@@ -7,12 +7,19 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @list_of_ratings = Movie.ratings
+
     @sort = params[:sort]
+    @ratings_filter = session[:ratings] || []
+
+    if params[:ratings]
+      session[:ratings] = @ratings_filter = params[:ratings].keys
+    end
 
     if params[:sort]
-      @movies = Movie.find(:all, order: params[:sort])
+      @movies = Movie.find_all_by_rating(@ratings_filter, order: params[:sort])
     else
-      @movies = Movie.all
+      @movies = Movie.find_all_by_rating(@ratings_filter)
     end
   end
 
