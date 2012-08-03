@@ -23,10 +23,18 @@ class MoviesController < ApplicationController
       @movies = Movie.find_all_by_rating(@ratings_filter.keys)
     end
 
-    if ((!params.has_key?(:sort) || !params.has_key?(:ratings)) && (session.has_key?(:sort) || session.has_key?(:ratings)))
-      flash.keep
+    if ((!params.has_key?(:sort) && !params.has_key?(:ratings)) && (session.has_key?(:sort) || session.has_key?(:ratings)))
       redirect_to movies_path sort: session[:sort], ratings: session[:ratings]
+    elsif !params.has_key?(:sort) && session.has_key?(:sort)
+      redirect_to movies_path sort: session[:sort], ratings: params[:ratings]
+    elsif !params.has_key?(:ratings) && session.has_key?(:ratings)
+      redirect_to movies_path sort: params[:sort], ratings: session[:ratings]
     end
+
+    # if ((!params.has_key?(:sort) || !params.has_key?(:ratings)) && (session.has_key?(:sort) || session.has_key?(:ratings)))
+    #   flash.keep
+    #   redirect_to movies_path sort: session[:sort], ratings: session[:ratings]
+    # end
   end
 
   def new
